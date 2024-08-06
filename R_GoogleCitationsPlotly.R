@@ -1,20 +1,19 @@
-## Griffiths M (2022)
-## Citation plot from Google Scholar profile using R and plotly
+## Griffiths M (2024) Citation plot from Google Scholar profile using R and plotly
 
 ################
-## User setup ## -------------------------------------------------------------------------------------------------------
+## User setup ## ---------------------------------------------------------------
 ################
 
-## install or load following packages ----------------------------------------------------------------------------------
 library("scholar")
 library("plotly")
 library("tidyverse")
+library("scales")
 
 ##############################
-## Define scholar dataframe ## -----------------------------------------------------------------------------------------
+## Define scholar dataframe ## -------------------------------------------------
 ##############################
 
-## add google scholar id part of profile URL --------------------------------------------------------------------------
+# Find and replace the google scholar id part of profile URL -------------------
 id <- "X--dqYYAAAAJ&hl=en&oi=ao"
 
 scholar <- get_profile(id)
@@ -24,15 +23,15 @@ scholar$affiliation
 scholar$h_index
 scholar$i10_index
 
-## create citation_history dataframe -----------------------------------------------------------------------------------
+## create citation_history dataframe -------------------------------------------
 citation_history <- get_citation_history(id)
 citation_history
 
 #####################################
-## Create figure with scholar data ## ----------------------------------------------------------------------------------
+## Plot figure with scholar data ## --------------------------------------------
 #####################################
 
-## preview ggplot bar chart --------------------------------------------------------------------------------------------
+# Plot barchart citations per year ---------------------------------------------
 p <- ggplot(data=citation_history, aes(x=year, y=cites)) +
   geom_bar(stat="identity") +
   theme_bw() +
@@ -42,19 +41,22 @@ p <- ggplot(data=citation_history, aes(x=year, y=cites)) +
     ,panel.grid.minor = element_blank()
   )  +
   xlab(bquote("Year")) + 
-  ylab(bquote("Citations"))
-p
+  ylab(bquote("Citations")) +
+  # scale_x_continuous(breaks = 2016:2024)
+  # scale_x_continuous(labels = scales::number_format(accuracy = 1))
+  scale_x_continuous(breaks = scales::breaks_width(2))
 
-###########################
-## Upload plot to plotly ## --------------------------------------------------------------------------------------------
-###########################
-
-## create ggplot bar chart ready for plotly upload ---------------------------------------------------------------------
 p <- ggplotly(p)
+
 p
 
-## Upload to plotly, replace USERNAME and APIKEY with your plotly details ----------------------------------------------
-Sys.setenv("plotly_username"="USERNAME")
-Sys.setenv("plotly_api_key"="APIKEY")
+###########################
+## Upload plot to plotly ## ----------------------------------------------------
+###########################
 
+# Replace USERNAME and APIKEY with your plotly details -------------------------
+Sys.setenv("plotly_username"="mdgriffiths")
+Sys.setenv("plotly_api_key"="7ILBBxStrQOBjjb19Vs0")
+
+# Upload plot to plotly --------------------------------------------------------
 api_create(p, filename = "googlecitations")
